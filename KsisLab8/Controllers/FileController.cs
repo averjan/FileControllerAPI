@@ -87,9 +87,19 @@ namespace KsisLab8.Controllers
         }
 
         [HttpGet]
-        public JsonResult Download(string path)
+        public ActionResult Download(string path)
         {
-            return new JsonResult(path);
+            if (System.IO.File.Exists(path))
+            {
+                byte[] data = System.IO.File.ReadAllBytes(path);
+                var info = new FileInfo(path);
+                string fileName = info.Name;
+                string fileType = MimeTypes.GetMimeType(fileName);
+                return File(data, fileType, fileName);
+            }
+
+            Response.StatusCode = 404;
+            return Content("Not Found");
         }
 
         [HttpGet]
