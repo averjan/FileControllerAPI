@@ -106,6 +106,7 @@ namespace KsisLab8.Controllers
 
         [HttpHead]
         //[AcceptVerbs(new[] { "GET", "HEAD" })]
+        //  curl -X HEAD https://localhost:44382/file/fileinfo/files/example.txt
         public JsonResult FileInfo(string path)
         {
             //Response.Clear();
@@ -113,8 +114,6 @@ namespace KsisLab8.Controllers
             {
                 var info = new FileInfo(path);
                 var customInfo = new FileModel();
-                //Response.ContentType = Path.GetExtension(path);
-                //Response.Headers.Clear();
                 Response.ContentLength = info.Length;
                 Response.Headers.Add("File-name", info.Name);
                 Response.Headers.Add("Full-name", info.FullName);
@@ -123,6 +122,15 @@ namespace KsisLab8.Controllers
             }
 
             return new JsonResult(null);
+        }
+
+        [HttpDelete]
+        public void Delete(string path)
+        {
+            if (System.IO.File.Exists(path))
+            {
+                System.IO.File.Delete(path);
+            }
         }
     }
 }
