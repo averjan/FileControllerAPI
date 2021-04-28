@@ -45,6 +45,9 @@ namespace KsisLab8
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=File}/{action=Download}/{*path}");
             });
         }
     }
