@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
+using KsisLab8.Models;
 
 namespace KsisLab8.Controllers
 {
@@ -88,6 +90,27 @@ namespace KsisLab8.Controllers
         public JsonResult Download(string path)
         {
             return new JsonResult(path);
+        }
+
+        [HttpHead]
+        //[AcceptVerbs(new[] { "GET", "HEAD" })]
+        public JsonResult FileInfo(string path)
+        {
+            //Response.Clear();
+            if (System.IO.File.Exists(path))
+            {
+                var info = new FileInfo(path);
+                var customInfo = new FileModel();
+                //Response.ContentType = Path.GetExtension(path);
+                //Response.Headers.Clear();
+                Response.ContentLength = info.Length;
+                Response.Headers.Add("File-name", info.Name);
+                Response.Headers.Add("Full-name", info.FullName);
+                Response.Headers.Add("Full-type", Path.GetExtension(path));
+                return new JsonResult(customInfo);
+            }
+
+            return new JsonResult(null);
         }
     }
 }
