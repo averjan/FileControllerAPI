@@ -86,6 +86,29 @@ namespace KsisLab8.Controllers
             }
         }
 
+        //  curl -i -X PUT -F file=@test.txt -k https://localhost:44382/file/upload/files/test
+        [HttpPut]
+        public ActionResult Upload(IFormFile file, string path)
+        {
+            if (file != null)
+            {
+                if (!System.IO.Directory.Exists(path))
+                {
+                    System.IO.Directory.CreateDirectory(path);
+                }
+
+                using (var fileStream = new FileStream(path + "/" + file.FileName, FileMode.Create))
+                {
+                    file.CopyTo(fileStream);
+                }
+
+                return Ok();
+            }
+
+            Response.StatusCode = 404;
+            return Content("Not Found");
+        }
+
         [HttpGet]
         public ActionResult Download(string path)
         {
@@ -103,7 +126,7 @@ namespace KsisLab8.Controllers
         }
 
         [HttpGet]
-        public JsonResult FileList(string path)
+        public ActionResult FileList(string path)
         {
             if (System.IO.Directory.Exists(path))
             {
@@ -111,13 +134,14 @@ namespace KsisLab8.Controllers
                 return new JsonResult(fileList);
             }
 
-            return new JsonResult(null);
+            Response.StatusCode = 404;
+            return new EmptyResult();
         }
 
         [HttpHead]
         //[AcceptVerbs(new[] { "GET", "HEAD" })]
         //  curl -X HEAD https://localhost:44382/file/fileinfo/files/example.txt
-        public JsonResult FileInfo(string path)
+        public ActionResult FileInfo(string path)
         {
             //Response.Clear();
             if (System.IO.File.Exists(path))
@@ -131,16 +155,21 @@ namespace KsisLab8.Controllers
                 return new JsonResult(customInfo);
             }
 
-            return new JsonResult(null);
+            Response.StatusCode = 404;
+            return new EmptyResult();
         }
 
         [HttpDelete]
-        public void Delete(string path)
+        public ActionResult Delete(string path)
         {
             if (System.IO.File.Exists(path))
             {
                 System.IO.File.Delete(path);
+                return Ok();
             }
+
+            Response.StatusCode = 404;
+            return new EmptyResult();
         }
     }
 }
