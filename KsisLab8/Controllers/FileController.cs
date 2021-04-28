@@ -92,6 +92,18 @@ namespace KsisLab8.Controllers
             return new JsonResult(path);
         }
 
+        [HttpGet]
+        public JsonResult FileList(string path)
+        {
+            if (System.IO.Directory.Exists(path))
+            {
+                var fileList = Directory.GetFiles(path).Select(Path.GetFileName).ToArray();
+                return new JsonResult(fileList);
+            }
+
+            return new JsonResult(null);
+        }
+
         [HttpHead]
         //[AcceptVerbs(new[] { "GET", "HEAD" })]
         public JsonResult FileInfo(string path)
